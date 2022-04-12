@@ -225,19 +225,18 @@ Sales Report
     </div>
     @endif
 
-    @if ($message = Session::get('search-error'))
+    @if (session('search-error'))
     <div class="alert alert-danger alert-block">
         <button type="button" class="close" data-bs-dismiss="alert">×</button>	
-        <strong>{{ $message }}</strong>
+        <strong>{{ session('search-error') }}</strong>
     </div>
     @endif
 
-    <div class="col-12">
+   
       <div class="row">
         <!-- Search box ---------------------------------------------------------->
-        <div class="col-6">
+        <div class="col-md-6">
           <form action="{{ url('customer/search') }}/{{ $product->product_id }}/{{ $package->package_id }}" method="GET" class="needs-validation" novalidate>
-              @csrf
               <div class="input-group mb-3 mx-auto">
                   <input type="text" class="form-control" placeholder="Enter IC Number" name="search">
                   <div class="col px-md-2">
@@ -246,10 +245,13 @@ Sales Report
               </div>
           </form>
         </div>
+        <div class="col-md-6">
+          <a href="{{ url('customer/attendance') }}/{{ $product->product_id }}/{{ $package->package_id }}?kehadiran=tidak+hadir" class="btn btn-danger btn-sm text-decoration-none float-end">Tidak Hadir</a>
+          <a href="{{ url('customer/attendance') }}/{{ $product->product_id }}/{{ $package->package_id }}?kehadiran=hadir" class="btn btn-success btn-sm text-decoration-none float-end mr-2">Hadir</a>
+        </div>
 
-        <div class="col-6">
+        {{-- <div class="col-md-6">
           <form action="{{ url('customer/attendance') }}/{{ $product->product_id }}/{{ $package->package_id }}" method="GET" class="needs-validation" novalidate>
-            @csrf
             <div class="input-group mb-3 mx-auto">
                 <input type="text" class="form-control" placeholder="Enter Kehadiran" name="kehadiran">
                 <div class="col px-md-2">
@@ -257,9 +259,9 @@ Sales Report
                 </div>
             </div>
           </form>
-        </div>  
+        </div>   --}}
       </div>  
-    </div>    
+      
 
     <!-- Show success payment in table ----------------------------------------------->
     {{-- <div class="float-right">{{$payment->links()}}</div>    --}}
@@ -318,7 +320,6 @@ Sales Report
       </table> 
     </div> 
     @endif
-
     <div class="table-responsive">
       <table class="table table-hover">
         <thead>
@@ -351,6 +352,8 @@ Sales Report
                       <i class="badge rounded-pill bg-success"> &nbsp; Hadir &nbsp; </i>
                     @elseif ($payments->attendance == 'tidak hadir')
                       <i class="badge rounded-pill bg-danger"> &nbsp; Tidak Hadir &nbsp; </i>
+                    @elseif ($payments->attendance == 'kehadiran disahkan')
+                      <i class="badge rounded-pill bg-primary"> &nbsp; Disahkan &nbsp; </i>
                     @else
                       <p></p>
                     @endif
@@ -383,8 +386,12 @@ Sales Report
           @endif
           @endforeach
           @endforeach
+
         </tbody>
       </table>  
+      <div class="float-right">
+        {{ $payment->links() }}
+      </div>
     </div>
   </div>
 </div>
